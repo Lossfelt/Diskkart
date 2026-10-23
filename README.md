@@ -1,5 +1,7 @@
 # Diskkart
 
+[![Bygg og tester](https://github.com/Lossfelt/Diskkart/actions/workflows/build.yml/badge.svg)](https://github.com/Lossfelt/Diskkart/actions/workflows/build.yml)
+
 Diskkart er et lite, portabelt Windows-program som viser hvor mye plass mapper bruker, inkludert undermappene. Det kan brukes når du trenger en rask oversikt uten å installere et separat diskverktøy.
 
 ![Skjermbilde av Diskkart](assets/screenshot.png)
@@ -9,6 +11,8 @@ Skjermbildet viser eksempeldata, ikke en skanning av en virkelig disk.
 ## Bruk
 
 Last ned eller kopier `Diskkart.exe`, og start filen. Velg en mappe eller skriv inn en sti som `C:\`, og velg **Skann**. Mappetreet sorteres med de største mappene øverst. Du kan velge mellom filstørrelse og faktisk plass på disk.
+
+Ferdig bygget exe-fil finnes som artefaktet **Diskkart** i siste vellykkede kjøring under [Actions](https://github.com/Lossfelt/Diskkart/actions/workflows/build.yml). Last ned ZIP-filen og pakk ut `Diskkart.exe`, eller bygg fra kildekoden med oppskriften nedenfor.
 
 Ved skanning av hele en disk viser programmet kapasitet, brukt og ledig plass fra Windows. Det viser også hvor mye av den brukte plassen som ble målt i mappetreet, slik at en forskjell ikke forveksles med en synlig mappe.
 
@@ -53,4 +57,4 @@ Testene oppretter en egen, midlertidig mappe under `work`, med Unicode-navn, tom
 
 Kildekoden ligger i `src`. Bygge- og testskriptene skal gjøre det enkelt å gjenskape den portable exe-filen på en annen Windows-maskin.
 
-GitHub Actions-oppsettet bygger og tester på Windows og lagrer exe-filen som et byggartefakt. Oppsettet er klargjort, men er ikke kjørt på GitHub ennå.
+GitHub Actions bygger og tester på Windows og lagrer exe-filen som et byggartefakt ved hver push og pull request.
