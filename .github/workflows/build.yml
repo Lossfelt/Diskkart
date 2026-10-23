@@ -1,0 +1,26 @@
+name: Build and test
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build
+        shell: powershell
+        run: .\Build.ps1
+      - name: Test
+        shell: pwsh
+        run: .\Test.ps1
+      - name: Upload portable application
+        uses: actions/upload-artifact@v7
+        with:
+          name: Diskkart
+          path: Diskkart.exe
+          if-no-files-found: error

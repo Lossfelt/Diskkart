@@ -1,0 +1,10 @@
+# Build outputs
+Diskkart.exe
+Diskkart.pdb
+*.user
+
+# Test fixtures and rendered test images
+work/
+
+# Local settings written by Diskkart
+Diskkart.settings.xml
