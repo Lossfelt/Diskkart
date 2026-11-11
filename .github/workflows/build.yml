@@ -2,6 +2,8 @@ name: Build and test
 
 on:
   push:
+    # Dependabot-grener testes via pull_request, så de trenger ikke en kjøring til.
+    branches-ignore: ['dependabot/**']
   pull_request:
 
 permissions:
@@ -24,3 +26,23 @@ jobs:
           name: Diskkart
           path: Diskkart.exe
           if-no-files-found: error
+
+  # Fletter Dependabot-PR-er automatisk når bygg og tester er grønne, men bare
+  # minor- og patch-oppdateringer. Major-hopp blir liggende for manuell testing.
+  # Flettes direkte i stedet for med "gh pr merge --auto", slik at det ikke
+  # krever branch protection eller "Allow auto-merge" i repoet.
+  dependabot-fletting:
+    needs: build
+    if: github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - id: metadata
+        uses: dependabot/fetch-metadata@v3
+      - if: steps.metadata.outputs.update-type != 'version-update:semver-major'
+        run: gh pr merge "$PR_URL" --squash --delete-branch
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
