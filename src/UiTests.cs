@@ -11,6 +11,7 @@ class UiTests
 {
     static object Field(object form, string name) { return form.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).GetValue(form); }
     static void Check(bool condition, string label) { if (!condition) throw new Exception("FAIL: " + label); Console.WriteLine("PASS: " + label); }
+    static string Bytes(long bytes) { return (string)typeof(MainWindow).GetMethod("FormatBytes", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { bytes }); }
     static async Task Wait(MainWindow form)
     {
         Stopwatch watch = Stopwatch.StartNew();
@@ -25,7 +26,8 @@ class UiTests
         Check(tree.Nodes.Count == 1 && tree.Nodes[0].Nodes.Count == 4, "Root and direct-file row displayed");
         VolumeUsage live = (VolumeUsage)Field(form, "volumeUsage");
         Check(live.Error == null && live.Capacity > 0 && live.Free >= 0 && !live.WholeVolume, "Live disk totals loaded for folder scan");
-        Check(((Label)Field(form, "capacityValue")).Text.Contains("GiB") && ((Label)Field(form, "usedValue")).Text.Contains("GiB") && ((Label)Field(form, "freeValue")).Text.Contains("GiB"), "Capacity, used and free space cards visible");
+        // Enheten (MiB/GiB/TiB) avhenger av disken testen kjører på, så sammenlign med appens egen formatering.
+        Check(((Label)Field(form, "capacityValue")).Text == Bytes(live.Capacity) && ((Label)Field(form, "usedValue")).Text == Bytes(live.Used) && ((Label)Field(form, "freeValue")).Text == Bytes(live.Free), "Capacity, used and free space cards visible");
         Check(form.Text == "Diskkart" && form.Icon != null && tree.ImageList != null, "App identity and folder icons loaded");
         int[] beforeWidths = (int[])((int[])Field(form, "columnWidths")).Clone();
         form.ResizeColumn(2, 10);
@@ -129,6 +131,8 @@ class UiTests
             };
             Application.Run(form);
         }
+        // Kolonnebredden endres midt i RunChecks; feilet en tidligere sjekk, ville denne bare gitt en følgefeil.
+        if (exit != 0) return exit;
         var restored = UiSettings.Load();
         Check(restored.Columns[1] == 155, "Resized column width saved on close");
         return exit;
